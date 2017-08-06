@@ -1,0 +1,63 @@
+ <div id="side-wrap">
+     <% if current_user.profile != nil %>
+        <aside id="your-profile" class="side-item">
+            <div class="cover">
+                
+                <% if  current_user.profile.echo_main_cover %>
+                <%= image_tag current_user.profile.echo_main_cover.url(:medium),:class => 'cover-img'%>
+                <% else %>
+                <img src=" https://dummyimage.com/260x110/cccccc/777.png" class="cover-img">
+                <% end %>
+            </div>
+            <div class="your-info clearfix">
+                 <div class="user_icon">
+                    <% if  current_user.profile.echo_user_icon %>
+                    <%= image_tag current_user.profile.echo_user_icon.url(:square),:width =>60,:height=>60%>
+                    <% else %>
+                    <img src=" https://dummyimage.com/60x60/cccccc/777.png">
+                    <% end %>
+                </div>                 
+                 <div class="your-name">
+                    <p class="display_name">
+                        <%= current_user.profile.display_name %><br>
+                        <small class="email">
+                             <%= current_user.email %>
+                        </small>
+                    </p>
+                </div>
+            </div>
+     
+
+</aside>
+<aside id="from-good" class="side-item">
+    <p class="heading">マッチング成立中</p>
+    <ul class="match-items">
+    <% cnt = 0 %>
+    <% current_user.profile.target_relation.each do |relation| %>
+    <% prof = Profile.find(relation.profile_id) %>
+    <% if relation.status == "good" && prof.self_relation_status(current_user.profile.id) == "good" %>
+       <li class="match-item clearfix">
+      <div class="profile-icon">
+                <% if  prof.echo_user_icon %>
+                <%= image_tag prof.echo_user_icon.url(:square),:width =>40,:height=>40%>
+                <% else %>
+                <img src=" https://dummyimage.com/60x60/cccccc/777.png">
+                <% end %> 
+      </div>  
+      <p class="display_name">
+          <%= prof.display_name %>
+      </p>
+          <%= link_to "メッセージ",'/messages/profile/' + prof.id.to_s , class: "btn btn-success btn-xs"%>
+      </li>
+      <% cnt += 1 %>
+      <% end %>
+    <% end %>
+    <% if cnt == 0 %>
+    <li>マッチング成立中の相手はいません</li>
+    <% end %>
+    </ul>    
+</aside>
+
+
+<% end %>
+</div>

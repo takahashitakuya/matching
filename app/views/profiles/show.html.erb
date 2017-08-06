@@ -1,0 +1,8 @@
+<h1>Profiles#show</h1>
+<p>Find me in app/views/profiles/show.html.erb</p>
+<%= image_tag @profile.profile_image.url(:medium) %>
+
+<%= @profile.user_icon_id %><br>
+
+<% @aaa = Profile.find(1) %>
+<%= @aaa.display_name %>

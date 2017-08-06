@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  taxonomy: MyString
+  slug: MyString
+  description: MyString
+  count: MyString
+  parent: MyString
+
+two:
+  name: MyString
+  taxonomy: MyString
+  slug: MyString
+  description: MyString
+  count: MyString
+  parent: MyString

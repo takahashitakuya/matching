@@ -1,0 +1,278 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, or any plugin's
+ * vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any other CSS/SCSS
+ * files in this directory. Styles in this file should be added after the last require_* statement.
+ * It is generally better to create a new file per style scope.
+ *
+ *= require_tree .
+ *= require_self
+ */
+@import "bootstrap-sprockets";
+@import "bootstrap";
+body{
+    img{
+        max-width:100%;
+    }
+}
+
+.form-radio{
+    .checkbox{
+        width:15%;
+        float:left;
+        margin-top:0;
+    }
+}
+
+.card{
+    border: solid 1px #ccc;
+    margin-bottom:20px;
+    position:relative;
+    .cover-image{
+          img{
+              width: 100%;
+              height: auto;
+          }
+        }
+        .card-body{
+            height:160px;
+            padding:10px;
+            
+            .catch-copy{
+                
+            	height:2.8em;
+            	overflow:hidden;
+            	text-overflow: ellipsis;
+            	line-height: 1.4;
+
+            }
+            
+            .card-data{
+                margin-bottom:20px;
+                .profile-icon{
+                    float:left;
+                }
+                .profile-detail{
+                    margin-left:50px;
+                    p{
+                        margin-bottom:0;
+                    	height:1.4em;
+                    	font-weight:bold;
+                    	overflow:hidden;
+                    	text-overflow: ellipsis;
+                    	line-height: 1.4;
+                        
+                    }
+                    .last-sign-in{
+                        color:#999;
+                    }
+                }
+            }
+        }
+        .card-footer{
+            position:absolute;
+            bottom:10px;
+            left:10px;
+            right:10px;
+        }
+ 
+
+}
+#cover-images-header,#message-header{
+    border-bottom:1px solid #ccc;
+    padding-bottom:10px;
+    position:relative;
+    .go-index{
+        display: block;
+        float: left;
+        width: 40px;
+        border-right: 1px solid #ccc;
+        height: 80px;
+        line-height: 80px;
+        margin-right: 20px;
+        color: #ccc;  
+        &:hover{
+            color:#333;
+        }
+    }
+    .who-info{
+     .who-image{
+        float:left;
+    }
+        .who-name{
+            
+            margin: 0 0 10px 120px;
+            padding-left: 40px; 
+            padding-top: 30px;
+            .last-sign-in{
+                font-size: small;
+                text-align: right;
+                width: 100%;   
+                float:right;
+            }
+        }       
+    }
+
+    .controle{
+        position:absolute;
+        bottom:10px;
+        right:0px;
+        font-size:small;
+    }
+}
+#message-wall{
+   ul{
+       padding:0;
+       list-style:none;
+        .message-item{
+            border-bottom:1px solid #ccc;
+            padding:20px 0;
+            .message-body{
+                position:relative;
+                background:#f1f1f1;
+                width :90% ; 
+                width : -webkit-calc(100% - 80px) ;
+                width : calc(100% - 80px) ;    
+                box-shadow:1px 1px 5px rgba(0,0,0,0.4);
+                padding:20px 20px 5px 20px;
+                border-radius:4px;
+            
+                .message-meta{
+                    color:#999;
+                    font-size:small;
+                    margin-top:20px;
+                    text-align:right;
+                }
+                .delete-btn{
+                    position:absolute;
+                    top:5px;
+                    right:5px;
+                    display:none;
+                }
+                
+            }
+            .message-footer{
+                width:70px;
+                text-align:center;
+                .profile-icon{
+                    margin-bottom:10px;
+                }
+                .display-name{
+                    font-size:small;
+                }
+            }
+            &.who{
+                .message-body{
+                    float:left;
+                }
+                .message-footer{
+                    float:right;
+                    margin-left:10px;
+                }
+            }
+             &.you{
+                .message-body{
+                  float:right;
+                }
+                .message-footer{
+                    float:left;
+                    margin-right:10px;
+                }
+            }
+        }       
+   }
+
+}
+
+
+#side-col{
+    #your-profile{
+        position:relative;
+        text-align:center;
+        border: solid 1px #ccc;
+        padding: 40px;
+        background: #f9f9f9; 
+        .cover{
+            position: absolute;
+            z-index: 0;
+            left: 0;
+            top: 0;
+            right: 0    
+ 
+        }
+         .cover-img{
+                height: 110px;
+                width: 100%;
+                object-fit: cover;
+            }  
+        .your-info{
+            position:relative;
+            margin-top:50px;
+                padding-bottom: 20px;
+            .your-name{
+                padding-top: 32px;
+                margin-left: 50px;
+                text-align: left;
+                line-height: 1em;
+                font-weight:bold;
+                .email{
+                    font-weight:normal;
+                    color:#cc;
+                }
+            }
+
+        }
+       .user_icon{
+            width: 60px;
+            height:60px;
+            background:#ccc;
+            border: solid 1px #fff;
+            float: left;
+            margin-left: -20px;
+       }
+       .monologue{
+        margin:20px -20px -20px -20px;
+       }
+        .monologue-text{
+            height:80px;
+            margin-bottom:10px;
+        }
+    }
+    .side-item{
+        margin-bottom:40px;
+        .heading{
+            border-bottom:1px solid #ccc;
+            background:#f1f1f1;
+            padding:5px 10px;
+        }
+        ul.match-items{
+            padding:0;
+            list-style:none;
+            li.match-item{
+                margin-bottom:10px;
+                .btn-group{
+                    margin-top:10px;
+                }
+                .profile-icon{
+                    float:left;
+                    margin-right:10px;
+                }
+               .display-name{
+                   float:left;
+               }
+            }
+        }
+        
+    }
+    
+}
+#cover-images{
+    .cover-image{
+        margin-bottom:20px;
+    }
+}

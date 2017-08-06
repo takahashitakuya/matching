@@ -1,0 +1,276 @@
+<div id="cover-images" class="row">
+    <div class="col-md-3" id="side-col">
+            <%= render partial: 'layouts/sidebar2' %>
+    </div>
+    <div class="col-md-9" id="main-col">
+            <header id="cover-images-header" class="clearfix">
+                <%= link_to profiles_path,:class => 'go-index' do %>
+                    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                <% end %>
+                <div class="who-info clearfix">
+                    <h2>投稿した写真を編集</h2>
+                </div>
+            </header>
+
+        <% if @cover_images.size > 0 %>
+        <h3>あなたの写真</h3>
+        <div class="row">
+        <div class="images">
+     
+        <% @cover_images.each do |image| %>
+            <div class="col-md-4 cover-image">
+                <div class="thumbnail">
+                    <%= image_tag image.image.url(:square) %>
+                </div>
+                <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                <a href="#" class="set-main-cover btn btn-success status-btn set-icon-btn" data-set="icon" data-profile-id="<%= current_user.profile.id %>" data-image-id="<%= image.id %>">
+                    <small>アイコンに設定</small></a>
+                <a href="#" class="set-main-cover btn btn-success status-btn set-cover-btn" data-set="cover" data-profile-id="<%= current_user.profile.id %>" data-image-id="<%= image.id %>">
+                    <small>カバー画像に設定</small></a>
+                </div>
+            </div>
+  
+        <% end %>
+        </div>
+
+    </div>  
+             <% else %>
+            <h3>まだ写真を登録していません</h3>
+            <% end %>
+
+        
+        <h3>新しい写真を追加する</h3>
+  <% if @cover_image.errors.any? %>
+    <div class="alert alert-danger">
+      <p><b><%= @cover_image.errors.count %>件のエラーがあります</b></p>
+
+      <ul>
+      <% @cover_image.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>        
+        
+        <div class="row">
+        <%= form_with model: @cover_image, local: true,:multipart => true do |form| %>
+        <%= form.hidden_field :profile_id,value:current_user.profile.id %>
+        <div class="form-group well">
+            <%= form.file_field :image,:class => 'form-controle'%>
+        </div>
+        
+        <%= form.submit class: "btn btn-default" %>
+        
+        <% end %>
+        </div>
+    </div>
+</div>
+
+<script>
+$(function(){
+  var add_url = "<%= url_for(controller: :profiles,action: :update,id:current_user.profile.id) %>"; 
+  var index_url = "<%= url_for(controller: :profiles,action: :index) %>";
+  $(document).ready(function(){
+      $(".set-icon-btn").on('click',set_icon_click);
+      $(".set-cover-btn").on('click',set_cover_click);      
+  });
+
+
+    function set_icon_click(){
+        var btn = $(this);
+        var data =  {
+           Profile:{
+                "user_icon_id" : btn.attr('data-image-id'),
+           }
+         
+        }
+        cover_image_update(data,btn,add_url);
+        return false;        
+    }  
+    function set_cover_click(){
+        var btn = $(this);
+        var data =  {
+           Profile:{
+                "main_cover_id" : btn.attr('data-image-id'),
+           }
+         
+        }
+        cover_image_update(data,btn,add_url);
+        return false;        
+    }  
+    
+    function cover_image_update(data,btn,url){
+ 
+         $.ajaxPrefilter(function(options, originalOptions, jqXHR) {
+            var token;
+            if (!options.crossDomain) {
+              token = $('meta[name="csrf-token"]').attr('content');
+              if (token) {
+                   return jqXHR.setRequestHeader('X-CSRF-Token', token);
+               }
+            }
+        });
+        $.ajax({
+            url: url,
+            type:'PATCH',
+            dataType:'json',
+            data : data,
+            timeout:10000,
+            // 送信前
+            beforeSend: function(xhr, settings) {
+                // ボタンを無効化し、二重送信を防止
+                $(".set-main-cover").attr('disabled', true);
+            },
+            // 応答後
+            complete: function(xhr, textStatus) {
+                // ボタンを有効化し、再送信を許可
+                $(".set-main-cover").attr('disabled', false);
+            },            
+        }).done(function(res){
+          
+            console.log(res);
+            sidebar_update_new();
+        }).fail(function(err){
+            console.log('err');
+            console.log(err);
+        })
+    }
+    function sidebar_update_new(){
+        $( "#side-col" ).load( "/cover_images/new" + " #side-wrap" ,function(){
+             btn_initialize();
+        }); 
+       
+    }
+    function btn_initialize(){
+        
+        $(".add-btn").off('click',add_btn_click);
+        $(".remove-btn").off('click',remove_btn_click);       
+        
+        $(".add-btn").on('click',add_btn_click);
+        $(".remove-btn").on('click',remove_btn_click);       
+    }  
+    
+    $(".btn").attr('disabled', true);
+    $(document).ready(function(){
+        $(".add-btn").on('click',add_btn_click);
+        $(".remove-btn").on('click',remove_btn_click);
+        $(".btn").attr('disabled', false);
+    
+    });
+    function add_btn_click(){
+        console.log('add_btn');
+     
+        var btn = $(this);
+        var data =  {
+           relation:{
+                "profile_id" : btn.attr('data-src-id'),
+                "target_profile_id" : btn.attr('data-target-id'),
+                "status" : btn.attr('data-status')
+           }
+         
+        }
+        var method = 'POST'
+        console.log(data);
+        status_update(data,btn,add_url,method);
+        return false;        
+    }
+    
+    function remove_btn_click(){
+        console.log('remove_btn');
+        var btn = $(this);
+        var data =  {
+            relation:{
+                "profile_id" : btn.attr('data-src-id'),
+                "target_profile_id" : btn.attr('data-target-id'),
+                "status" : btn.attr('data-status')
+            }
+        }
+        var method = 'POST'
+        status_update(data,btn,remove_url,method);
+        return false; 
+    }
+  
+    function status_update(data,btn,url,method){
+ 
+         $.ajaxPrefilter(function(options, originalOptions, jqXHR) {
+            var token;
+            if (!options.crossDomain) {
+              token = $('meta[name="csrf-token"]').attr('content');
+              if (token) {
+                   return jqXHR.setRequestHeader('X-CSRF-Token', token);
+               }
+            }
+        });
+        $.ajax({
+            url: url,
+            type:method,
+            dataType:'json',
+            data : data,
+            timeout:10000,
+            // 送信前
+            beforeSend: function(xhr, settings) {
+                // ボタンを無効化し、二重送信を防止
+                $(".btn").attr('disabled', true);
+            },
+            // 応答後
+            complete: function(xhr, textStatus) {
+                // ボタンを有効化し、再送信を許可
+                $(".btn").attr('disabled', false);
+            },            
+        }).done(function(res){
+             obj = $("#profile-" + data["relation"]["target_profile_id"]);
+            status_change_after(data,obj,res['status']);
+            sidebar_update();
+        }).fail(function(err){
+            console.log('err');
+            console.log(err);
+        })
+    }
+    
+    function status_change_after(data,obj,status){
+        
+       var btnParent = obj.find('.btn-group');
+        switch(status){
+            case 'matching':
+            // Send Message
+            console.log("xx")
+            var html = '<a href="/messages/profile' + data['relation']['target_profile_id'] + '" class="btn btn-success status-btn msg-btn" role="button" data-src-id="' + data['relation']['profile_id'] + '" data-target-id="' + data['relation']['target_profile_id'] + '" data-status="remove">Message</a>'
+             html +='<a href="#" class="btn btn-default status-btn remove-btn" role="button" data-src-id="' + data['relation']['profile_id'] + '" data-target-id="' + data['relation']['target_profile_id'] + '" data-status="remove">Remove Good</a> ';
+           btnParent.html(html); 
+            break;
+            case 'from_good':
+            // Remove good
+            html ='<a href="#" class="btn btn-default status-btn remove-btn" role="button" data-src-id="' + data['relation']['profile_id'] + '" data-target-id="' + data['relation']['target_profile_id'] + '" data-status="remove">Remove Good</a> ';
+            
+            btnParent.html(html); 
+            break;
+            case 'to_good':
+            // good or skip
+               html ='<a href="#" class="btn btn-danger status-btn add-btn" role="button" data-src-id="' + data['relation']['profile_id'] + '" data-target-id="' + data['relation']['target_profile_id'] + '" data-status="good">Good!</a> ';
+               html +='<a href="#" class="btn btn-primary status-btn add-btn" role="button" data-src-id="' + data['relation']['profile_id'] + '" data-target-id="' + data['relation']['target_profile_id'] + '" data-status="skip">Skip</a> ';
+               btnParent.html(html); 
+            break;
+            case 'from_skip':
+            // remove skip
+                html ='<a href="#" class="btn btn-default status-btn remove-btn" role="button" data-src-id="' + data['relation']['profile_id'] + '" data-target-id="' + data['relation']['target_profile_id'] + '" data-status="remove">Remove Skip</a> ';
+                btnParent.html(html); 
+
+            break;
+            case 'nothing':
+            // good
+            html ='<a href="#" class="btn btn-danger status-btn add-btn" role="button" data-src-id="' + data['relation']['profile_id'] + '" data-target-id="' + data['relation']['target_profile_id'] + '" data-status="good">Good!</a> ';
+            btnParent.html(html); 
+            break;
+        
+        }
+      btn_initialize();
+        
+    }    
+    
+});
+
+ 
+
+
+    
+</script>

@@ -1,0 +1,251 @@
+
+<div class="row">
+<div class="col-md-3" id="side-col">
+        <%= render partial: 'layouts/sidebar',locals:{profile: @profile}  %>
+</div>
+<div class="col-md-9" id="main-col">
+    <div class="row">
+<% if current_user.profile != nil %>
+<% @profiles.each do |profile|%>
+<% status = profile.check_relation_status(current_user.profile.id)%>
+  <div id="profile-<%= profile.id %>" class="col-sm-6 col-md-4 profile-item <%= status %> ">
+    <div class="card">
+        <div class="cover-image">
+       
+   
+            <% if  profile.echo_main_cover %>
+            <%= image_tag profile.echo_main_cover.url(:card),:class => 'cover-img'%>
+            <% else %>
+            <img src=" https://dummyimage.com/242x200/cccccc/777.png" class="cover-img">
+            <% end %>    
+        </div>
+  
+      <div class="card-body">
+        <p class="catch-copy"><%= profile.catch_copy %></p>
+            <div class="card-data clearfix">
+              <div class="profile-icon">
+                    <% if  profile.echo_user_icon %>
+                    <%= image_tag profile.echo_user_icon.url(:square),:width =>40,:height=>40%>
+                    <% else %>
+                    <img src=" https://dummyimage.com/40x40/cccccc/777.png">
+                    <% end %>                  
+              </div>
+              <div class="profile-detail">
+              <p class="display-name">
+                <%= profile.display_name %>
+              </p>
+              <p>
+                  <small class="last-sign-in">
+                      最終ログイン
+                        <time datetime="">
+                            <%= time_ago_in_words(profile.user.last_sign_in_at)+"前" %> 
+                        </time>
+                  </small>
+              </p>
+                       
+              </div>
+
+            </div>
+
+      </div>
+      <footer class="card-footer">
+<%
+## 自分がgoodかskipをしている場合
+#  if profile.target_relation.where(profile_id: current_user.profile.id).size > 0
+
+## 相手からgoodかskipされている場合
+# if current_user.profile.target_relation(profile_id: profile.id).size >0
+
+## 状態一覧
+# 何も関連がない状態
+# 自分がgoodをしている状態
+# 自分がskipをしている状態
+# 相手にgoodされている状態
+# 相手にskipされている状態
+# お互いにgoodしている状態
+# お互いにskipしている状態
+# 自分はgoodをしているが相手がskipしている状態
+# 相手にgoodされているが自分はskipしている状態
+
+%>
+             <% case status %>
+                 <% when 'matching' then %>
+                     <!--Send Massage -->
+                    <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                         <%= link_to "メッセージ",'/messages/profile/' + profile.id.to_s , class: "btn btn-success"%>
+                      <a href="#" class="btn btn-default status-btn remove-btn" role="button" data-src-id="<%= current_user.profile.id %>" data-target-id="<%= profile.id %>" data-status="remove">Remove Good</a>                          
+                    </div>                     
+
+                 <% when 'from_good' then %>  
+                    <!--Remove good -->
+                    <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                       <a href="#" class="btn btn-default status-btn remove-btn" role="button" data-src-id="<%= current_user.profile.id %>" data-target-id="<%= profile.id %>" data-status="remove">Remove Good</a> 
+                    </div>
+                  <% when 'to_good' then %>    
+                     <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                       <a href="#" class="btn btn-danger status-btn add-btn" role="button" data-src-id="<%= current_user.profile.id %>" data-target-id="<%= profile.id %>" data-status="good">Good!</a> 
+  
+                       <a href="#" class="btn btn-primary status-btn add-btn" role="button" data-src-id="<%= current_user.profile.id %>" data-target-id="<%= profile.id %>" data-status="skip">Skip</a> 
+                    </div>   
+                   <% when 'nothing' then %>  
+                      <!--Good -->
+                    <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                       <a href="#" class="btn btn-danger status-btn add-btn" role="button" data-src-id="<%= current_user.profile.id %>" data-target-id="<%= profile.id %>" data-status="good">Good!</a> 
+                    </div>   
+                    <% when 'from_skip' then %>  
+                    <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                        <a href="#" class="btn btn-default status-btn remove-btn" role="button" data-src-id="<%= current_user.profile.id %>" data-target-id="<%= profile.id %>" data-status="remove">Remove Skip</a> 
+                    </div>                   
+                    
+             <% end %>
+
+      
+      </footer>
+     
+      
+    </div>
+    </div>
+  <% end %>
+  
+  <% end %>
+</div>
+        
+    </div>
+</div>
+<script>
+$(function(){
+    $(".btn").attr('disabled', true);
+    $(document).ready(function(){
+        $(".add-btn").on('click',add_btn_click);
+        $(".remove-btn").on('click',remove_btn_click);
+        $(".btn").attr('disabled', false);
+    
+    });
+    function add_btn_click(){
+        console.log('add_btn');
+     
+        var btn = $(this);
+        var data =  {
+           relation:{
+                "profile_id" : btn.attr('data-src-id'),
+                "target_profile_id" : btn.attr('data-target-id'),
+                "status" : btn.attr('data-status')
+           }
+         
+        }
+        var method = 'POST'
+        console.log(data);
+        status_update(data,btn,add_url,method);
+        return false;        
+    }
+    
+    function remove_btn_click(){
+        console.log('remove_btn');
+        var btn = $(this);
+        var data =  {
+            relation:{
+                "profile_id" : btn.attr('data-src-id'),
+                "target_profile_id" : btn.attr('data-target-id'),
+                "status" : btn.attr('data-status')
+            }
+        }
+        var method = 'POST'
+        status_update(data,btn,remove_url,method);
+        return false; 
+    }
+  
+    function status_update(data,btn,url,method){
+ 
+         $.ajaxPrefilter(function(options, originalOptions, jqXHR) {
+            var token;
+            if (!options.crossDomain) {
+              token = $('meta[name="csrf-token"]').attr('content');
+              if (token) {
+                   return jqXHR.setRequestHeader('X-CSRF-Token', token);
+               }
+            }
+        });
+        $.ajax({
+            url: url,
+            type:method,
+            dataType:'json',
+            data : data,
+            timeout:10000,
+            // 送信前
+            beforeSend: function(xhr, settings) {
+                // ボタンを無効化し、二重送信を防止
+                $(".btn").attr('disabled', true);
+            },
+            // 応答後
+            complete: function(xhr, textStatus) {
+                // ボタンを有効化し、再送信を許可
+                $(".btn").attr('disabled', false);
+            },            
+        }).done(function(res){
+             obj = $("#profile-" + data["relation"]["target_profile_id"]);
+            status_change_after(data,obj,res['status']);
+            sidebar_update();
+        }).fail(function(err){
+            console.log('err');
+            console.log(err);
+        })
+    }
+    
+    function status_change_after(data,obj,status){
+        
+       var btnParent = obj.find('.btn-group');
+        switch(status){
+            case 'matching':
+            // Send Message
+            console.log("xx")
+            var html = '<a href="/messages/profile' + data['relation']['target_profile_id'] + '" class="btn btn-success status-btn msg-btn" role="button" data-src-id="' + data['relation']['profile_id'] + '" data-target-id="' + data['relation']['target_profile_id'] + '" data-status="remove">Message</a>'
+             html +='<a href="#" class="btn btn-default status-btn remove-btn" role="button" data-src-id="' + data['relation']['profile_id'] + '" data-target-id="' + data['relation']['target_profile_id'] + '" data-status="remove">Remove Good</a> ';
+           btnParent.html(html); 
+            break;
+            case 'from_good':
+            // Remove good
+            html ='<a href="#" class="btn btn-default status-btn remove-btn" role="button" data-src-id="' + data['relation']['profile_id'] + '" data-target-id="' + data['relation']['target_profile_id'] + '" data-status="remove">Remove Good</a> ';
+            
+            btnParent.html(html); 
+            break;
+            case 'to_good':
+            // good or skip
+               html ='<a href="#" class="btn btn-danger status-btn add-btn" role="button" data-src-id="' + data['relation']['profile_id'] + '" data-target-id="' + data['relation']['target_profile_id'] + '" data-status="good">Good!</a> ';
+               html +='<a href="#" class="btn btn-primary status-btn add-btn" role="button" data-src-id="' + data['relation']['profile_id'] + '" data-target-id="' + data['relation']['target_profile_id'] + '" data-status="skip">Skip</a> ';
+               btnParent.html(html); 
+            break;
+            case 'from_skip':
+            // remove skip
+                html ='<a href="#" class="btn btn-default status-btn remove-btn" role="button" data-src-id="' + data['relation']['profile_id'] + '" data-target-id="' + data['relation']['target_profile_id'] + '" data-status="remove">Remove Skip</a> ';
+                btnParent.html(html); 
+
+            break;
+            case 'nothing':
+            // good
+            html ='<a href="#" class="btn btn-danger status-btn add-btn" role="button" data-src-id="' + data['relation']['profile_id'] + '" data-target-id="' + data['relation']['target_profile_id'] + '" data-status="good">Good!</a> ';
+            btnParent.html(html); 
+            break;
+        
+        }
+      btn_initialize();
+        
+    }
+    function sidebar_update(){
+        $( "#side-col" ).load( index_url + " #side-wrap" ,function(){
+             btn_initialize();
+        }); 
+       
+    }
+    function btn_initialize(){
+        
+        $(".add-btn").off('click',add_btn_click);
+        $(".remove-btn").off('click',remove_btn_click);       
+        
+        $(".add-btn").on('click',add_btn_click);
+        $(".remove-btn").on('click',remove_btn_click);       
+    }
+})
+
+    
+</script>
+

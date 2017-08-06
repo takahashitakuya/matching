@@ -1,0 +1,101 @@
+<%= form_with model: @profile, local: true,:multipart => true do |form| %>
+
+  <%= form.hidden_field :user_id,value:current_user.id %>
+  
+    <div class="form-group">
+    <%= form.label :display_name,"表示名" %><br>
+    <%= form.text_field :display_name, class: "form-control" %>
+    </div>
+  
+
+    <div class="form-group">
+    <%= form.label :description ,"簡単な概要"%><br>
+    <%= form.text_area :description, class: "form-control" %>
+    </div> 
+
+    <div class="form-group">
+    <%= form.label :catch_copy ,"近況を一言" %><br>
+    <%= form.text_field :catch_copy, class: "form-control" %>
+    </div> 
+
+    <!--<div class="form-group">-->
+    <!--<%= form.label :policy,"ミッション/ビジョン" %><br>-->
+    <!--<%= form.text_area :policy, class: "form-control" %>-->
+    <!--</div> -->
+
+    <!--<div class="form-group">-->
+    <!--    <%= form.label :profile_image,"プロフィールアイコン" %>-->
+    <!--    <div class="row">-->
+    <!--        <% if @profile.cover_image? %>-->
+    <!--        <div class="col-md-2">-->
+    <!--            <% if @profile.profile_image %>-->
+    <!--            <%= image_tag @profile.profile_image.url(:medium) %>-->
+    <!--            <% end %>-->
+    <!--        </div>-->
+    <!--        <% end %>-->
+    <!--        <div class="col-md-10">-->
+    <!--                <%= form.file_field :profile_image%>-->
+    <!--        </div>-->
+    <!--    </div>-->
+    <!--</div> -->
+    <!--<div class="form-group">-->
+    <!--     <%= form.label :cover_image,"カバー画像" %>-->
+    <!--    <div class="row">-->
+    <!--        <% if @profile.cover_image? %>-->
+    <!--        <div class="col-md-2">-->
+    <!--            <% if @profile.cover_image %>-->
+    <!--            <%= image_tag @profile.cover_image.url(:medium) %>-->
+    <!--            <% end %>-->
+    <!--        </div>-->
+    <!--        <% end %>-->
+    <!--        <div class="col-md-10">-->
+    <!--                <%= form.file_field :cover_image%>-->
+    <!--        </div>-->
+    <!--    </div>-->
+    <!--</div> -->
+    
+    <!--<div class="form-group">-->
+    <!--    <%= form.label :postal_code ,"郵便番号"%><br>-->
+    <!--    <%= form.text_field :postal_code, class: "form-control col-md-3" %>       -->
+    <!--</div>-->
+
+    <div class="form-group">
+        <%= form.label :address_full ,"居住地"%><br>
+        <%= form.text_field :address_full, class: "form-control" %>       
+    </div>
+
+  
+ 
+    <!-- <div class="form-group">-->
+    <!--    <%= form.label :website ,"website"%><br>-->
+    <!--    <%= form.text_field :website, class: "form-control" %>       -->
+    <!--</div>     -->
+    
+  
+
+    <!--<div class="form-group">-->
+
+    <!--    <h3><%= form.label :term_ids, "エリア", class: "control-label"%></h3>-->
+    <!--    <div class="form-radio row">-->
+    <!--      <div class="col-md-12 clear-fix">-->
+        
+    <!--        <%= form.collection_check_boxes :term_ids, Term.where('taxonomy':'area'), :id, :name do |b| %>-->
+    <!--        <%= b.label(class: "checkbox") { b.check_box(class: "check_box")  + b.text } %>                   -->
+    <!--        <% end %>-->
+    <!--       </div>-->
+    <!--    </div>     -->
+    
+
+    <!--<div class="form-group">-->
+    <!--    <h3><%= form.label :term_ids, "分野", class: "control-label"%></h3>-->
+    <!--    <div class="form-radio row">-->
+    <!--      <div class="col-md-12 clear-fix">-->
+        
+    <!--        <%= form.collection_check_boxes :term_ids, Term.where('taxonomy':'activity'), :id, :name do |b| %>-->
+    <!--        <%= b.label(class: "checkbox") { b.check_box(class: "check_box")  + b.text } %>                   -->
+    <!--        <% end %>-->
+    <!--       </div>-->
+    <!--</div>-->
+
+  <%= form.submit class: "btn btn-default" %>
+<% end %>
